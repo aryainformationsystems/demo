@@ -24,6 +24,20 @@ public class VehicleService {
 	@Autowired
 	private VehicleRepository vehicleRepository;
 
+	public VehicleResponse updateVehicle(String registration, CreateVehicleRequest vehicleRequest)
+			throws JsonMappingException, JsonProcessingException {
+		Vehicle vehicle = new Vehicle();
+		vehicle.setAddress(vehicleRequest.getAddress());
+		vehicle.setChassisNumber(vehicleRequest.getChassisNumber());
+		vehicle.setDateOfExpiry(vehicleRequest.getDateOfExpiry());
+		vehicle.setDateOfRegistration(vehicleRequest.getDateOfRegistration());
+		vehicle.setEngineNumber(vehicleRequest.getEngineNumber());
+		vehicle.setOwner(vehicleRequest.getOwner());
+		vehicle.setRegistration(registration);
+		Vehicle result = vehicleRepository.save(vehicle);
+		return (new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(result), VehicleResponse.class));
+	}
+
 	public VehicleResponse createVehicle(CreateVehicleRequest vehicleRequest)
 			throws JsonMappingException, JsonProcessingException {
 		Vehicle vehicle = new Vehicle();
@@ -43,10 +57,13 @@ public class VehicleService {
 		Vehicle result = vehicleRepository.findByRegistration(registrationNumber);
 		if (null != result) {
 			return (new ObjectMapper().readValue(new ObjectMapper().writeValueAsString(result), VehicleResponse.class));
-		}
-		else {
+		} else {
 			throw new VehicleNotFoundException(registrationNumber);
 		}
+	}
+
+	public void deleteVehicle(String registrationNumber) throws JsonMappingException, JsonProcessingException {
+		vehicleRepository.deleteById(registrationNumber);
 	}
 
 	@SuppressWarnings("unchecked")

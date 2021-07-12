@@ -5,9 +5,11 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Sort;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.CrossOrigin;
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
@@ -48,6 +50,22 @@ public class VehicleController {
 	public GenericResponse createVehicle(@RequestBody CreateVehicleRequest vehicleRequest)
 			throws JsonMappingException, JsonProcessingException {
 		VehicleResponse result = vehicleService.createVehicle(vehicleRequest);
-		return new GenericResponse(result, "SUCCES", null, 1);
+		return new GenericResponse(result, "SUCCESS", null, 1);
+	}
+
+	@PutMapping("/api/v1/vehicle/{registration}")
+	@PreAuthorize("hasAuthority('Administrator')")
+	public GenericResponse updateVehicle(@PathVariable("registration") String registration,
+			@RequestBody CreateVehicleRequest vehicleRequest) throws JsonMappingException, JsonProcessingException {
+		VehicleResponse result = vehicleService.updateVehicle(registration, vehicleRequest);
+		return new GenericResponse(result, "SUCCESS", null, 1);
+	}
+
+	@DeleteMapping("/api/v1/vehicle/{registration}")
+	@PreAuthorize("hasAuthority('Administrator')")
+	public GenericResponse deleteVehicle(@PathVariable("registration") String registration)
+			throws JsonMappingException, JsonProcessingException {
+		vehicleService.deleteVehicle(registration);
+		return new GenericResponse(null, "SUCCESS", null, 1);
 	}
 }
